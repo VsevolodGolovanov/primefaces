@@ -185,17 +185,26 @@ if (!PrimeFaces.widget) {
     PrimeFaces.widget.DynamicOverlayWidget = PrimeFaces.widget.BaseWidget.extend({
 
         //@Override
-        init: function(cfg) {
+        init: function(cfg, isWholeWidgetOverlay) {
             this._super(cfg);
 
-            PrimeFaces.utils.registerDynamicOverlay(this, this.jq, this.id);
+            if (isWholeWidgetOverlay)
+                this.initOverlay(this, this.jq, this.id);
+            // else descendant has to call initOverlay explicitly
+        },
+
+        initOverlay: function(overlay, overlayId) {
+            this.overlay = overlay;
+            this.overlayId = overlayId;
+
+            PrimeFaces.utils.registerDynamicOverlay(this, this.overlay, this.overlayId);
         },
 
         //@Override
         refresh: function(cfg) {
             this._super(cfg);
 
-            PrimeFaces.utils.removeModal(this.id);
+            PrimeFaces.utils.removeModal(this.overlayId);
 
             this.appendTo = null;
             this.modalOverlay = null;
@@ -205,22 +214,22 @@ if (!PrimeFaces.widget) {
         destroy: function() {
             this._super();
 
-            PrimeFaces.utils.removeModal(this.id);
+            PrimeFaces.utils.removeModal(this.overlayId);
 
             this.appendTo = null;
             this.modalOverlay = null;
         },
 
         enableModality: function() {
-            this.modalOverlay = PrimeFaces.utils.addModal(this.id,
-                this.jq.css('z-index') - 1,
+            this.modalOverlay = PrimeFaces.utils.addModal(this.overlayId,
+                this.overlay.css('z-index') - 1,
                 $.proxy(function() {
                     return this.getModalTabbables();
                 }, this));
         },
 
         disableModality: function(){
-            PrimeFaces.utils.removeModal(this.id);
+            PrimeFaces.utils.removeModal(this.overlayId);
             this.modalOverlay = null;
         },
 

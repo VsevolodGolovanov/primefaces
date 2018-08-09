@@ -103,6 +103,10 @@ public class DialogRenderer extends CoreRenderer {
 
         writer.startElement("div", null);
         writer.writeAttribute("id", clientId, null);
+        writer.writeAttribute("class", "ui-dialog-container", null);
+
+        writer.startElement("div", null);
+        writer.writeAttribute("id", clientId + "_dlg", null);
         writer.writeAttribute("class", styleClass, null);
 
         if (style != null) {
@@ -116,6 +120,8 @@ public class DialogRenderer extends CoreRenderer {
         encodeContent(context, dialog);
 
         encodeFooter(context, dialog);
+
+        writer.endElement("div");
 
         writer.endElement("div");
     }
